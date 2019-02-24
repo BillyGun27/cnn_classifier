@@ -2,6 +2,12 @@ from keras.applications.xception import Xception
 from keras.layers import Dense, Input, Dropout
 from keras.models import Model
 
+def preprocess_input(x):
+    x /= 255.0
+    x -= 0.5
+    x *= 2.0
+    return x
+
 def build_xception(target_size=299,num_class=10):
     input_tensor = Input(shape=(target_size, target_size, 3))
     base_model = Xception(

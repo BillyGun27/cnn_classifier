@@ -1,4 +1,4 @@
-from model.mobilenet import build_mobilenet
+from model.squeezenet import build_squeezenet,preprocess_input
 from keras.preprocessing.image import ImageDataGenerator
 from keras import optimizers
 from keras.preprocessing.image import img_to_array
@@ -13,16 +13,19 @@ import random
 import cv2
 import os
 
+SEED = 42
+TARGET_SIZE = 299
 
-model = build_mobilenet()
+model = build_squeezenet(weight_decay=1e-4, image_size=299)
+
+
+
 model.compile(
     optimizer=optimizers.SGD(lr=1e-2, momentum=0.9, nesterov=True), 
     loss='categorical_crossentropy', metrics=['accuracy', 'top_k_categorical_accuracy']
 )
 
 
-SEED = 42
-TARGET_SIZE = 224
 
 # construct the image generator for data augmentation
 '''
@@ -112,13 +115,11 @@ model.fit_generator(generator=train_generator,
 STEP_SIZE_VALID=valid_generator.n//valid_generator.batch_size
 model.evaluate_generator(generator=valid_generator ,steps=STEP_SIZE_VALID)
 #save
-model.save("mobilenet.h5")
+model.save("squeezenet.h5")
 
 #test
-STEP_SIZE_TEST=test_generator.n//test_generator.batch_size
 test_generator.reset()
-pred=model.predict_generator(test_generator,verbose=1,steps=STEP_SIZE_TEST)
-
+pred=model.predict_generator(test_generator,verbose=1)
 
 #predict
 predicted_class_indices=np.argmax(pred,axis=1)

@@ -133,9 +133,10 @@ def download_and_extract():
 
 def save_images(images, labels , typ):
     print("Saving images to disk")
+    lbl = [ "airplane", "bird", "car", "cat", "deer", "dog", "horse", "monkey" , "ship", "truck" ] 
     i = 0
     for image in images:
-        label = labels[i]
+        label = lbl[ labels[i]-1 ]
         if i>=3000 and typ == "val":
           typ = "test"
         directory = './img/'+ str(typ) +"/"+ str(label) + '/'
@@ -148,5 +149,4 @@ def save_images(images, labels , typ):
         print(filename)
         save_image(image, filename)
         i = i+1
-    
     
